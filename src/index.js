@@ -5,6 +5,7 @@ import * as markdownIt from 'markdown-it';
 
 export const mdLinks = (route, options) => {
   console.log("route1", route);
+console.log('optionkata', options.validate);
 
   return new Promise((resolve, reject) => {
     // identifica si la ruta existe 
@@ -14,17 +15,14 @@ export const mdLinks = (route, options) => {
       if(!path.isAbsolute(route)) {
         console.log(path.resolve(route))
       }
-
+      // aca reviso si el path(route) es archivo
       fs.stat(route, (err, stats) => {
-        // if (err) throw err;
-      
-        // console.log(`stats: ${JSON.stringify(stats)}`);
         console.log('is file', stats.isFile());
         if (stats.isFile()) {
           // ver si es md
           if(path.extname(route) === '.md') {
             console.log('es md');
-
+          // aca es para leer el archivo
             fs.readFile(route, 'utf8', (err, data) => {
               if (err) {
                 console.error(err);
@@ -34,14 +32,46 @@ export const mdLinks = (route, options) => {
               // encontramos los links dentro del archivo, llamo al data que es el contenido del archivo
               const markdownText = data;
               const regex = /\[(.*?)\]\((.*?)\)/g;
-              
-              let match = regex.exec(markdownText);
-              while (match !== null) {
-                const linkText = match[1];
-                const linkURL = match[2];
-                // console.log(`Texto: ${linkText}, URL: ${linkURL}`);
-                match = regex.exec(markdownText);
+              // arreglo de todos los links 
+              let matches = Array.from(markdownText.matchAll(regex));
+              console.log('aqui match', matches.length)
+              // recorrer los arreglos y revisar los matches, los links y los url 
+              const matchesIterator = markdownText.matchAll(regex);
+              // aca lleno este array con el objeto false
+              let responseFalse = []
+              // el for of se usa para recorrer un objeto iterable.
+              for (const match of matchesIterator) {
+                if (!options.validate) {
+                  let objfalse = {
+                    href: match[2],
+                    text: match[1],
+                    file: route
+                  }
+                  // aca  agrego un elemento(objeto) al array
+                  responseFalse.push(objfalse);
+                }
+                console.log('estoy llenito',responseFalse)
+                // aca estoy haciendo format strings 
+                // console.log(`Link text: ${match[1]}, Link URL: ${match[2]}`);
               }
+
+              if (options.validate) {
+                // http
+                // iterar por cada link 
+                
+              }
+
+
+
+              // for (const match of matches){
+              //   console.log(match)
+              // }
+              // while (match !== null) {
+              //   const linkText = match[1];
+              //   const linkURL = match[2];
+              //   // console.log(`Texto: ${linkText}, URL: ${linkURL}`);
+              //   match = regex.exec(markdownText);
+              // }
 
               // if (validate) {
                 // petición http linkURL
@@ -58,6 +88,7 @@ export const mdLinks = (route, options) => {
           }
         }
       });
+
       // if (fs.stat(route).isFile()) {
       //   console.log('is file');
       //   // if (isMd(route)) {
