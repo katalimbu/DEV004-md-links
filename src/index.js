@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as markdownIt from 'markdown-it';
+import axios from 'axios';
 // const fs = require('fs');
 
 export const mdLinks = (route, options) => {
@@ -39,21 +40,65 @@ console.log('optionkata', options.validate);
               const matchesIterator = markdownText.matchAll(regex);
               // aca lleno este array con el objeto false
               let responseFalse = []
+              let responseTrue = []
               // el for of se usa para recorrer un objeto iterable.
               for (const match of matchesIterator) {
-                if (!options.validate) {
+                if (options.validate) {
+                  axios.get(match[2])
+                    .then(response => {
+                      let objtrue = {
+                        href: match[2],
+                        text: match[1],
+                        file: route,
+                        status: response.status,
+                        statusText: response.statusText
+                      };
+                      responseTrue.push(objtrue);
+                      console.log('aqui voy', responseTrue)
+                    })
+                    .catch(error => {
+                      let objfalse = {
+                        href: match[2],
+                        text: match[1],
+                        file: route,
+                        status: error.response ? error.response.status : 'Not Found',
+                        statusText: error.response ? error.response.statusText : 'Fail'
+                      };
+                      responseFalse.push(objfalse);
+                      console.log('aqui vengo', responseFalse)
+                    });
+                } else {
                   let objfalse = {
                     href: match[2],
                     text: match[1],
                     file: route
-                  }
-                  // aca  agrego un elemento(objeto) al array
+                  };
                   responseFalse.push(objfalse);
+                  console.log('aqui estoy', responseFalse);
                 }
-                console.log('estoy llenito',responseFalse)
-                // aca estoy haciendo format strings 
-                // console.log(`Link text: ${match[1]}, Link URL: ${match[2]}`);
-              }
+                
+              //   if (!options.validate) {
+              //     let objfalse = {
+              //       href: match[2],
+              //       text: match[1],
+              //       file: route
+              //     }
+              //     axios.get(objfalse.href)
+              //     .then(response => {
+              //       // Aquí se puede hacer algo con la respuesta, si se desea
+              //     })
+              //     .catch(error => {
+              //       objfalse.status = error.response.status;
+              //       responseFalse.push(objfalse);
+              //     });
+              //     // aca  agrego un elemento(objeto) al array
+              //     // responseFalse.push(objfalse);
+                  
+              //   }
+              //   console.log('estoy llenito',responseFalse)
+              //   // aca estoy haciendo format strings 
+              //   // console.log(`Link text: ${match[1]}, Link URL: ${match[2]}`);
+               }
 
               if (options.validate) {
                 // http
