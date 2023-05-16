@@ -3,6 +3,6 @@ import { mdLinks } from './index.js';
 // console.log(error)
 // }); 
 // hacer un archivo roto
-mdLinks('/Users/katalinaortiz/Desktop/laboratoria /DEV004-md-links', {validate: false})
+mdLinks('./test/test.md', {validate: true})
     .then(links => console.log(links))
     .catch((error) => { console.log(error)});

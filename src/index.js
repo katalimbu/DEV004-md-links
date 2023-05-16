@@ -2,9 +2,9 @@ import * as fs from 'fs';
 import * as path from 'path';
 import axios from 'axios';
 
-export const mdLinks = (route, options) => {
-  console.log("route1", route);
-  console.log('optionkata', options.validate);
+export const mdLinks = (route, options = {}) => {
+  // console.log("route1", route);
+  // console.log('optionkata', options.validate);
 
   return new Promise((resolve, reject) => {
     // identifica si la ruta existe 
@@ -12,7 +12,7 @@ export const mdLinks = (route, options) => {
     if (fs.existsSync(route)){
       // identifica si la ruta es absoluta y si no la convierte
       if(!path.isAbsolute(route)) {
-        console.log(path.resolve(route))
+        path.resolve(route)
       }
       // aca reviso si el path(route) es archivo
       fs.stat(route, (err, stats) => {
@@ -39,15 +39,19 @@ export const mdLinks = (route, options) => {
               // console.log('aqui match', matches.length)
               // recorrer los arreglos y revisar los matches, los links y los url 
               const matchesIterator = markdownText.matchAll(regex);
+              console.log(matchesIterator)
               // aca lleno este array con el objeto false
               let responseFalse = []
               let responseTrue = []
+              let promises = []
+
 
               // el for of se usa para recorrer un objeto iterable.
               for (const match of matchesIterator) {
+                // console.log(match)
                 if (options.validate) {
-                  axios.get(match[2])
-                    .then(response => {
+                  let promise = axios.get(match[2])
+                    .then(response => {                
                       let objtrue = {
                         href: match[2],
                         text: match[1],
@@ -55,20 +59,23 @@ export const mdLinks = (route, options) => {
                         status: response.status,
                         statusText: response.statusText
                       };
+                      // console.log(objtrue);
                       responseTrue.push(objtrue);
+                      // console.log(responseTrue);
                       // console.log('aqui voy', responseTrue)
                     })
                     .catch(error => {
-                      let objfalse = {
+                      let objtrue = {
                         href: match[2],
                         text: match[1],
                         file: route,
                         status: error.response ? error.response.status : 'Not Found',
                         statusText: error.response ? error.response.statusText : 'Fail'
                       };
-                      responseFalse.push(objfalse);
+                      responseTrue.push(objtrue);
                       // console.log('aqui vengo', responseFalse)
                     });
+                    promises.push(promise); 
                 } else {
                   let objfalse = {
                     href: match[2],
@@ -79,12 +86,18 @@ export const mdLinks = (route, options) => {
                   // console.log('aqui estoy', responseFalse);
                 }
               }
-
-              if (options.validate) {
-                resolve(responseTrue);
-              } else {
-                resolve(responseFalse);
-              }
+              // console.log(options.validate)
+              Promise.all(promises).then(() => {
+                // console.log('response', responseTrue);
+             
+                if (options.validate) {
+                  // console.log(responseTrue)
+                  resolve(responseTrue);
+                  
+                } else {
+                  resolve(responseFalse);
+                }
+              });
             });
           }
           else {
@@ -102,7 +115,7 @@ export const mdLinks = (route, options) => {
           
             if (files.length > 0) {
               for(const subdirectory of files){
-                // const newroute = route + '/' + subdirectory(esto es lo mismo q format String)
+                //esto es una concatenacion de strings= const newroute = route + '/' + subdirectory(esto es lo mismo q format String)
                 // esto es recursividad, porque desde mi funcion estoy llamando a mi funcion, porque debo volver a petir el mismo proceso.
                 // esto es necesario para construir el path del subdirectorio
                 mdLinks(`${route}/${subdirectory}`, options)
