@@ -21,12 +21,13 @@
   "scripts": {
     "test": "jest --coverage"
   },
-  "keywords":[],
+  "keywords": [],
   "bin": {
     "mdlinks": "./cli.js"
   },
   "dependencies": {
     "axios": "^1.4.0",
+    "chalk": "^5.2.0",
     "eslint": "^8.39.0",
     "markdown-it": "^13.0.1"
   },

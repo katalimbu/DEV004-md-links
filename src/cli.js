@@ -3,7 +3,8 @@
 
 import { argv } from 'process';// propiedad de un modulo
 import { mdLinks } from './index.js';// funcion 
-import axios from 'axios';// biblioteca
+import chalk from 'chalk';
+
 
 // desestructuracion de array para asignar los valores de argv 
 const [,, path, ...options] = argv;// traducir lo que dice la linea de comando con js 
@@ -22,7 +23,7 @@ const truncateText = (text, maxLength) => {
 const printLinks = (links) => {
   links.forEach((link) => {
     if(validate){
-        const { href, text, file, status, statusText} = linkks
+        const { href, text, file, status, statusText} = link;
         console.log(`${file} ${href} ${text} ${status} ${statusText}`);
     }
     else{
@@ -56,7 +57,7 @@ const printStats = (links) => {
   console.log(`Total: ${total}`);
   console.log(`Unique: ${unique}`);
   if (validate) {
-    const broken = links.filter(link => link.message === 'fail').length;
+    const broken = links.filter(link => link.statusText === 'Fail').length;
     console.log(`Broken: ${broken}`);
   }
 };
