@@ -1,6 +1,8 @@
 {
   "name": "md-links",
   "version": "0.1.0",
+  "type": "module",
+  "main": "index.js",
   "engines": {
     "node": ">=16.x"
   },
@@ -8,5 +10,31 @@
     "createdAt": "2023-03-02T14:34:23.772Z",
     "version": "5.6.0",
     "commit": "ffa75c8b2bede153844195479abeff01f3e34227"
-  }
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.21.5",
+    "@babel/core": "^7.21.8",
+    "@babel/preset-env": "^7.21.5",
+    "babel-jest": "^29.5.0",
+    "jest": "^29.5.0"
+  },
+  "scripts": {
+    "test": "jest --coverage"
+  },
+  "keywords": [],
+  "bin": {
+    "mdlinks": "./cli.js"
+  },
+  "dependencies": {
+    "axios": "^1.4.0",
+    "chalk": "^5.2.0",
+    "eslint": "^8.39.0",
+    "markdown-it": "^13.0.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "katalimbu"
+  },
+  "author": "Katalina Ortiz",
+  "license": "ISC"
 }
