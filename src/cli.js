@@ -24,13 +24,16 @@ const printLinks = (links) => {
   links.forEach((link) => {
     if(validate){
         const { href, text, file, status, statusText} = link;
-        console.log(`${file} ${href} ${text} ${status} ${statusText}`);
+        const statusColor = status >= 200 && status < 400 ? chalk.green(status) : chalk.red(status);
+        const messageColor = status >= 200 && status < 400 ? chalk.green(statusText) : chalk.red(statusText);  
+        console.log(`${chalk.magenta(file)} ${chalk.yellow(href)} ${chalk.cyan(truncateText(text, 50))} ${statusColor} ${messageColor}`);
+
     }
     else{
     // desestructuracion de objetos para acceder a las propiedades 
     const { file, href, text } = link;
-    console.log(`${file} ${href} ${text}`);
-    }
+    console.log(`${chalk.magenta(file)} ${chalk.yellow(href)} ${chalk.cyan(truncateText(text, 50))}`);
+}
   });
 };
 
@@ -54,17 +57,17 @@ const printStats = (links) => {
   const total = links.length;// guarda en la var total, cuantos elemento hay en ese array
   // un set es una coleccoon de valores unicos 
   const unique = new Set(links.map(link => link.href)).size;// midiendo el tamaño de cuantos links unicos hay 
-  console.log(`Total: ${total}`);
-  console.log(`Unique: ${unique}`);
+  console.log(`${chalk.bold('Total:')} ${total}`);
+  console.log(`${chalk.bold('Unique:')} ${unique}`);
   if (validate) {
     const broken = links.filter(link => link.statusText === 'Fail').length;
-    console.log(`Broken: ${broken}`);
+    console.log(`${chalk.bold('Broken:')} ${broken}`);
   }
 };
 
 const mdLinksCLI = () => {
   if (!path) {
-    console.log('Please provide a file path.');
+    console.log(chalk.red('Por favor, ingresa una ruta de archivo.'));
     return;
   }
 
@@ -80,7 +83,8 @@ const mdLinksCLI = () => {
         }
     })
     .catch((error) => {
-      console.error(`An error occurred: ${error.message}`);
+        console.error(chalk.red(`Ups! error, ingresa una ruta valida: ${error.message}`));
+
     });
 };
 
