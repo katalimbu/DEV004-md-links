@@ -57,11 +57,11 @@ const printStats = (links) => {
   const total = links.length;// guarda en la var total, cuantos elemento hay en ese array
   // un set es una coleccoon de valores unicos 
   const unique = new Set(links.map(link => link.href)).size;// midiendo el tamaño de cuantos links unicos hay 
-  console.log(`${chalk.bold('Total:')} ${total}`);
-  console.log(`${chalk.bold('Unique:')} ${unique}`);
+  console.log(`${chalk.magenta('Total:')} ${total}`);
+  console.log(`${chalk.yellow('Unique:')} ${unique}`);
   if (validate) {
     const broken = links.filter(link => link.statusText === 'Fail').length;
-    console.log(`${chalk.bold('Broken:')} ${broken}`);
+    console.log(`${chalk.cyan('Broken:')} ${broken}`);
   }
 };
 
