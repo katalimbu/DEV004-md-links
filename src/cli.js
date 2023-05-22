@@ -12,19 +12,20 @@ const [,, path, ...options] = argv;// traducir lo que dice la linea de comando c
 // el include() detetmina si una matriz incluye algo o no 
 const validate = options.includes('--validate');
 const stats = options.includes('--stats');
-
+// recibe un texto y una longitud máxima, y devuelve el texto truncado con puntos suspensivos si excede la longitud máxima.
 const truncateText = (text, maxLength) => {
   if (text.length <= maxLength) {
     return text;
   }
   return text.slice(0, maxLength) + '...';
 };
-
+// recibe un array de objetos y los imprime en consola
 const printLinks = (links) => {
   links.forEach((link) => {
     if(validate){
         const { href, text, file, status, statusText} = link;
         const statusColor = status >= 200 && status < 400 ? chalk.green(status) : chalk.red(status);
+        // const isOk = status >= 200 && status < 400 
         const messageColor = status >= 200 && status < 400 ? chalk.green(statusText) : chalk.red(statusText);  
         console.log(`${chalk.magenta(file)} ${chalk.yellow(href)} ${chalk.cyan(truncateText(text, 50))} ${statusColor} ${messageColor}`);
 
